@@ -1,0 +1,77 @@
+# Codemagic CI for Flossi — https://docs.codemagic.io/yaml-quick-start/building-a-flutter-app/
+#
+# Two iOS workflows:
+#   ios-unsigned  No Apple account needed. Produces an UNSIGNED .ipa
+#                 (for inspection or re-signing with your own tools; it
+#                 cannot be installed on an iPhone as-is).
+#   ios-release   Signed .ipa via your App Store Connect API key
+#                 (installable via TestFlight / ad-hoc). Requires the setup
+#                 described in README → "Building the iOS app on Codemagic".
+
+definitions:
+  scripts:
+    - &prepare
+      name: Get packages & generate code
+      script: |
+        flutter pub get
+        dart run build_runner build
+        flutter gen-l10n
+    - &unit_tests
+      name: Unit tests
+      script: flutter test
+      ignore_failure: true
+
+workflows:
+  ios-unsigned:
+    name: iOS (unsigned IPA)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - *prepare
+      - *unit_tests
+      - name: Build unsigned iOS app
+        script: flutter build ios --release --no-codesign
+      - name: Package as .ipa
+        script: |
+          mkdir -p build/ios/unsigned/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/unsigned/Payload/
+          cd build/ios/unsigned && zip -qr Flossi-unsigned.ipa Payload
+    artifacts:
+      - build/ios/unsigned/*.ipa
+
+  ios-release:
+    name: iOS (signed IPA)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      # Name of the App Store Connect API key you add in
+      # Codemagic → Team settings → Integrations → Developer Portal.
+      app_store_connect: Flossi ASC key
+    environment:
+      ios_signing:
+        distribution_type: app_store # or ad_hoc for direct installs on registered devices
+        bundle_identifier: com.flossi
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - *prepare
+      - *unit_tests
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Build signed .ipa
+        script: |
+          flutter build ipa --release \
+            --build-number=$(($BUILD_NUMBER + 1)) \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
