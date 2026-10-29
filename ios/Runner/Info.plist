@@ -30,19 +30,13 @@
 		<true/>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
-			<key>NSFaceIDUsageDescription</key>
-			<string>Flossi uses Face ID to keep your finances private.</string>
 			<key>UIApplicationSupportsMultipleScenes</key>
 			<false/>
 			<key>UISceneConfigurations</key>
 			<dict>
-				<key>NSFaceIDUsageDescription</key>
-				<string>Flossi uses Face ID to keep your finances private.</string>
 				<key>UIWindowSceneSessionRoleApplication</key>
 				<array>
 					<dict>
-						<key>NSFaceIDUsageDescription</key>
-						<string>Flossi uses Face ID to keep your finances private.</string>
 						<key>UISceneClassName</key>
 						<string>UIWindowScene</string>
 						<key>UISceneConfigurationName</key>
