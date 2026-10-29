@@ -85,33 +85,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboardingSkip => 'Passer';
 
   @override
-  String get onboardingLiveRates => 'Taux du jour';
-
-  @override
-  String get onboardingHomeBalance => 'Solde principal';
-
-  @override
-  String get onboardingConsolidated => 'Tout dans une seule devise';
-
-  @override
-  String get onboardingSynced => 'Synchronisé';
-
-  @override
-  String get onboardingRateNote => 'Converti au taux du jour';
-
-  @override
-  String get onboardingHeadline =>
-      'L’argent sans frontières. Suivi avec élégance.';
+  String get onboardingHeadline => 'Chaque dépense. Suivie avec élégance.';
 
   @override
   String get onboardingSubtitle =>
-      'Flossi convertit le dirham marocain, l’euro, le dollar américain et plus de 60 devises dans votre devise principale.';
-
-  @override
-  String get onboardingFeatureRates => 'Taux de change quotidiens';
+      'Notez vos dépenses en quelques secondes, fixez un budget mensuel et voyez où va votre argent.';
 
   @override
   String get onboardingFeatureTracking => 'Suivi sans encombrement';
+
+  @override
+  String get onboardingFeatureBudget => 'Budgets mensuels';
+
+  @override
+  String get onboardingPreviewLabel => 'Dépensé ce mois-ci';
+
+  @override
+  String get onboardingPreviewOnTrack => 'En bonne voie';
 
   @override
   String get onboardingFeaturePrivate => 'Privé et hors ligne';
@@ -131,7 +121,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get currencyStepBody =>
-      'Toutes les dépenses sont converties dans cette devise pour vos soldes et graphiques. Vous pouvez la changer à tout moment.';
+      'Vos montants, totaux et graphiques sont affichés dans cette devise. Vous pouvez la changer à tout moment.';
 
   @override
   String get currencySearchHint => 'Rechercher une devise ou un pays…';

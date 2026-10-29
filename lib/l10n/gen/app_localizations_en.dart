@@ -85,33 +85,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingSkip => 'Skip';
 
   @override
-  String get onboardingLiveRates => 'Live rates';
-
-  @override
-  String get onboardingHomeBalance => 'Home balance';
-
-  @override
-  String get onboardingConsolidated => 'Everything in one currency';
-
-  @override
-  String get onboardingSynced => 'Synced';
-
-  @override
-  String get onboardingRateNote => 'Converted at the day’s rate';
-
-  @override
-  String get onboardingHeadline =>
-      'Money without borders. Tracked with elegance.';
+  String get onboardingHeadline => 'Every expense. Tracked with elegance.';
 
   @override
   String get onboardingSubtitle =>
-      'Flossi converts Moroccan Dirham, Euro, US Dollar and 60+ currencies into your single home currency.';
-
-  @override
-  String get onboardingFeatureRates => 'Daily exchange rates';
+      'Log what you spend in seconds, set a monthly budget and see exactly where your money goes.';
 
   @override
   String get onboardingFeatureTracking => 'Zero-clutter tracking';
+
+  @override
+  String get onboardingFeatureBudget => 'Monthly budgets';
+
+  @override
+  String get onboardingPreviewLabel => 'Spent this month';
+
+  @override
+  String get onboardingPreviewOnTrack => 'On track';
 
   @override
   String get onboardingFeaturePrivate => 'Private & offline-first';
@@ -131,7 +121,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyStepBody =>
-      'All expenses are converted into this currency for your balances and charts. You can change it anytime.';
+      'Your amounts, totals and charts are shown in this currency. You can change it anytime.';
 
   @override
   String get currencySearchHint => 'Search currency or country…';

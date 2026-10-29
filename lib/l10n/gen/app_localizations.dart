@@ -244,59 +244,41 @@ abstract class AppLocalizations {
   /// **'Skip'**
   String get onboardingSkip;
 
-  /// No description provided for @onboardingLiveRates.
-  ///
-  /// In en, this message translates to:
-  /// **'Live rates'**
-  String get onboardingLiveRates;
-
-  /// No description provided for @onboardingHomeBalance.
-  ///
-  /// In en, this message translates to:
-  /// **'Home balance'**
-  String get onboardingHomeBalance;
-
-  /// No description provided for @onboardingConsolidated.
-  ///
-  /// In en, this message translates to:
-  /// **'Everything in one currency'**
-  String get onboardingConsolidated;
-
-  /// No description provided for @onboardingSynced.
-  ///
-  /// In en, this message translates to:
-  /// **'Synced'**
-  String get onboardingSynced;
-
-  /// No description provided for @onboardingRateNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Converted at the day’s rate'**
-  String get onboardingRateNote;
-
   /// No description provided for @onboardingHeadline.
   ///
   /// In en, this message translates to:
-  /// **'Money without borders. Tracked with elegance.'**
+  /// **'Every expense. Tracked with elegance.'**
   String get onboardingHeadline;
 
   /// No description provided for @onboardingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Flossi converts Moroccan Dirham, Euro, US Dollar and 60+ currencies into your single home currency.'**
+  /// **'Log what you spend in seconds, set a monthly budget and see exactly where your money goes.'**
   String get onboardingSubtitle;
-
-  /// No description provided for @onboardingFeatureRates.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily exchange rates'**
-  String get onboardingFeatureRates;
 
   /// No description provided for @onboardingFeatureTracking.
   ///
   /// In en, this message translates to:
   /// **'Zero-clutter tracking'**
   String get onboardingFeatureTracking;
+
+  /// No description provided for @onboardingFeatureBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budgets'**
+  String get onboardingFeatureBudget;
+
+  /// No description provided for @onboardingPreviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month'**
+  String get onboardingPreviewLabel;
+
+  /// No description provided for @onboardingPreviewOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get onboardingPreviewOnTrack;
 
   /// No description provided for @onboardingFeaturePrivate.
   ///
@@ -331,7 +313,7 @@ abstract class AppLocalizations {
   /// No description provided for @currencyStepBody.
   ///
   /// In en, this message translates to:
-  /// **'All expenses are converted into this currency for your balances and charts. You can change it anytime.'**
+  /// **'Your amounts, totals and charts are shown in this currency. You can change it anytime.'**
   String get currencyStepBody;
 
   /// No description provided for @currencySearchHint.

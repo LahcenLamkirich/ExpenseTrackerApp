@@ -131,7 +131,7 @@ void main() {
     await settle(tester);
   });
 
-  // TODO: hangs after the manual-rate sheet saves (drift transaction under
+  // TODO(lahcen): hangs after the manual-rate sheet saves (drift transaction under
   // fake async). Revisit if the exchange features are kept.
   testWidgets('missing rate blocks saving until a manual rate is entered', skip: true, (tester) async {
     await pumpEditor(tester);

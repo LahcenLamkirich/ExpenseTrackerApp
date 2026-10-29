@@ -84,32 +84,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboardingSkip => 'تخطٍّ';
 
   @override
-  String get onboardingLiveRates => 'سعر اليوم';
-
-  @override
-  String get onboardingHomeBalance => 'الرصيد الرئيسي';
-
-  @override
-  String get onboardingConsolidated => 'كل شيء بعملة واحدة';
-
-  @override
-  String get onboardingSynced => 'متزامن';
-
-  @override
-  String get onboardingRateNote => 'محوَّل بسعر اليوم';
-
-  @override
-  String get onboardingHeadline => 'مال بلا حدود. يُتابَع بأناقة.';
+  String get onboardingHeadline => 'كل مصروف. يُتابَع بأناقة.';
 
   @override
   String get onboardingSubtitle =>
-      'يحوّل فلوسي الدرهم المغربي واليورو والدولار الأمريكي وأكثر من 60 عملة إلى عملتك الرئيسية.';
-
-  @override
-  String get onboardingFeatureRates => 'أسعار صرف يومية';
+      'سجّل مصاريفك في ثوانٍ، وحدّد ميزانية شهرية، واعرف أين تذهب أموالك.';
 
   @override
   String get onboardingFeatureTracking => 'تتبّع بلا فوضى';
+
+  @override
+  String get onboardingFeatureBudget => 'ميزانيات شهرية';
+
+  @override
+  String get onboardingPreviewLabel => 'الإنفاق هذا الشهر';
+
+  @override
+  String get onboardingPreviewOnTrack => 'على المسار';
 
   @override
   String get onboardingFeaturePrivate => 'خاص ويعمل دون اتصال';
@@ -129,7 +120,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get currencyStepBody =>
-      'تُحوَّل كل المصاريف إلى هذه العملة في الأرصدة والرسوم البيانية. يمكنك تغييرها في أي وقت.';
+      'تُعرض مبالغك ومجاميعك ورسومك البيانية بهذه العملة. يمكنك تغييرها في أي وقت.';
 
   @override
   String get currencySearchHint => 'ابحث عن عملة أو بلد…';

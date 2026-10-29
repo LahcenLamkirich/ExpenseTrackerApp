@@ -54,7 +54,7 @@ void main() {
     expect(find.text('HOME'), findsOneWidget);
   });
 
-  // TODO: dashboard DB streams under fake async; same issue as the onboarding test.
+  // TODO(lahcen): dashboard DB streams under fake async; same issue as the onboarding test.
   testWidgets('returning user lands on Home and can switch tabs', skip: true, (tester) async {
     await pumpFlossi(tester, {'settings.onboardingCompleted': true, 'settings.homeCurrency': 'MAD'});
     expect(find.text('HOME'), findsOneWidget);

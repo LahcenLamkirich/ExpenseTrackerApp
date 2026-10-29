@@ -121,12 +121,6 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 _Tile(
-                  icon: Icons.currency_exchange_rounded,
-                  title: l10n.settingsCurrencies,
-                  subtitle: l10n.settingsRatesBody,
-                  onTap: () => context.push(Routes.currencies),
-                ),
-                _Tile(
                   icon: Icons.category_outlined,
                   title: l10n.settingsCategories,
                   subtitle: l10n.settingsCategoriesBody,

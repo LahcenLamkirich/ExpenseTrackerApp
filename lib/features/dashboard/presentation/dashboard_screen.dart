@@ -15,7 +15,6 @@ import 'package:flossi/core/widgets/common.dart';
 import 'package:flossi/core/widgets/headers.dart';
 import 'package:flossi/features/categories/data/category_repository.dart';
 import 'package:flossi/features/currencies/presentation/rate_providers.dart';
-import 'package:flossi/features/currencies/presentation/rates_status_pill.dart';
 import 'package:flossi/features/dashboard/presentation/dashboard_providers.dart';
 import 'package:flossi/features/settings/presentation/home_currency_flow.dart';
 import 'package:flossi/features/settings/presentation/settings_controller.dart';
@@ -99,11 +98,6 @@ class DashboardScreen extends ConsumerWidget {
                 EmptyState(title: l10n.dashEmptyTitle, message: l10n.dashEmptyBody)
               else
                 const _RecentList(),
-              const SizedBox(height: Space.lg),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: Space.margin),
-                child: RatesStatusPill(),
-              ),
             ],
           ),
         ),
@@ -337,17 +331,7 @@ class _CurrencyBreakdown extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: Space.margin),
           child: SectionLabel(
             l10n.dashByCurrency,
-            trailing: Row(
-              children: [
-                TagPill(label: l10n.currenciesActive(stats.byCurrency.length)),
-                IconButton(
-                  tooltip: l10n.currenciesTitle,
-                  onPressed: () => context.push(Routes.currencies),
-                  style: IconButton.styleFrom(backgroundColor: Colors.transparent),
-                  icon: Icon(Icons.currency_exchange_rounded, size: 20, color: c.accentStrong),
-                ),
-              ],
-            ),
+            trailing: TagPill(label: l10n.currenciesActive(stats.byCurrency.length)),
           ),
         ),
         SizedBox(

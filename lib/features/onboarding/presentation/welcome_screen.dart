@@ -1,21 +1,21 @@
-import 'dart:math' as math;
-
 import 'package:flossi/core/money/currency.dart';
 import 'package:flossi/core/money/money.dart';
 import 'package:flossi/core/money/money_context.dart';
 import 'package:flossi/core/router/routes.dart';
+import 'package:flossi/core/theme/app_colors.dart';
 import 'package:flossi/core/theme/app_dimens.dart';
 import 'package:flossi/core/theme/app_theme.dart';
 import 'package:flossi/core/theme/app_typography.dart';
 import 'package:flossi/core/widgets/amount_text.dart';
 import 'package:flossi/core/widgets/buttons.dart';
+import 'package:flossi/core/widgets/category_icon.dart';
 import 'package:flossi/core/widgets/common.dart';
 import 'package:flossi/features/onboarding/presentation/onboarding_widgets.dart';
 import 'package:flossi/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Onboarding step 1 (design 01): brand promise and illustration.
+/// Onboarding step 1 (design 01): brand promise and a preview of the app.
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -44,9 +44,9 @@ class WelcomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: Space.margin),
                 child: Column(
                   children: [
-                    const SizedBox(height: Space.md),
-                    const _Illustration(),
                     const SizedBox(height: Space.lg),
+                    const _PreviewCard(),
+                    const SizedBox(height: Space.xl),
                     Text(
                       l10n.onboardingHeadline,
                       textAlign: TextAlign.center,
@@ -69,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
                       spacing: Space.sm,
                       runSpacing: Space.sm,
                       children: [
-                        _FeaturePill(glyph: '✨', label: l10n.onboardingFeatureRates),
+                        _FeaturePill(glyph: '🎯', label: l10n.onboardingFeatureBudget),
                         _FeaturePill(glyph: '⚡', label: l10n.onboardingFeatureTracking),
                         _FeaturePill(glyph: '🔒', label: l10n.onboardingFeaturePrivate),
                       ],
@@ -128,19 +128,20 @@ class _FeaturePill extends StatelessWidget {
   }
 }
 
-/// Decorative stack: three tilted foreign-currency cards flowing into one
-/// consolidated home balance. Amounts are illustrative sample values.
-class _Illustration extends StatelessWidget {
-  const _Illustration();
+/// Decorative preview of the monthly overview: total, budget bar and a few
+/// categories. Amounts are illustrative sample values.
+class _PreviewCard extends StatelessWidget {
+  const _PreviewCard();
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final c = context.colors;
-    final samples = [
-      (Money(485000, CurrencyCatalog.of('MAD')), -2.0, Space.md),
-      (Money(45000, CurrencyCatalog.of('EUR')), 1.5, Space.xl + Space.sm),
-      (Money(52000, CurrencyCatalog.of('USD')), -0.8, Space.lg),
+    final mad = CurrencyCatalog.of('MAD');
+    final rows = [
+      ('🍜', Palette.categoryAccents[1], l10n.categoryDining, Money(185000, mad)),
+      ('🛒', Palette.categoryAccents[5], l10n.categoryGroceries, Money(212000, mad)),
+      ('🚕', Palette.categoryAccents[6], l10n.categoryTransport, Money(88000, mad)),
     ];
 
     return ExcludeSemantics(
@@ -152,142 +153,65 @@ class _Illustration extends StatelessWidget {
           opacity: t,
           child: Transform.translate(offset: Offset(0, 24 * (1 - t)), child: child),
         ),
-        child: Column(
-          children: [
-            for (final (i, (money, angle, inset)) in samples.indexed)
-              Padding(
-                padding: EdgeInsetsDirectional.only(start: inset, end: Space.xl - inset / 2, bottom: Space.sm),
-                child: Transform.rotate(
-                  angle: angle * math.pi / 180,
-                  child: _MiniCurrencyCard(money: money, showLiveTag: i == 0, liveLabel: l10n.onboardingLiveRates),
-                ),
-              ),
-            const SizedBox(height: Space.xs),
-            Container(width: 2, height: 20, color: c.accentStrong.withValues(alpha: 0.4)),
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(color: c.accent, shape: BoxShape.circle),
-              child: Icon(Icons.arrow_downward_rounded, size: 20, color: c.onAccent),
+        child: Container(
+          padding: const EdgeInsets.all(Space.margin),
+          decoration: BoxDecoration(
+            color: c.card,
+            borderRadius: Radii.lgAll,
+            border: Border.all(color: c.hairline),
+            gradient: RadialGradient(
+              center: AlignmentDirectional.topEnd.resolve(Directionality.of(context)),
+              radius: 1.2,
+              colors: [c.glow, c.card],
             ),
-            const SizedBox(height: Space.md),
-            _HomeBalanceCard(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MiniCurrencyCard extends StatelessWidget {
-  const _MiniCurrencyCard({required this.money, required this.showLiveTag, required this.liveLabel});
-
-  final Money money;
-  final bool showLiveTag;
-  final String liveLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    final p = context.money.parts(money, display: MoneyDisplay.none, trimZeroFraction: true);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Space.margin, vertical: Space.md),
-      decoration: BoxDecoration(
-        color: c.card,
-        borderRadius: Radii.pillAll,
-        border: Border.all(color: c.hairline),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 20, offset: const Offset(0, 8))],
-      ),
-      child: Row(
-        children: [
-          Text(money.currency.flag, style: const TextStyle(fontSize: 22)),
-          const SizedBox(width: Space.smd),
-          Expanded(
-            child: Text.rich(
-              TextSpan(
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 32, offset: const Offset(0, 12))],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  TextSpan(text: p.number, style: AppTypography.headlineSm.copyWith(color: c.ink, fontWeight: FontWeight.w700)),
-                  TextSpan(text: ' ${money.currencyCode}', style: context.text.bodyMedium?.copyWith(color: c.muted)),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(color: c.selectedChip, shape: BoxShape.circle),
+                    child: Icon(Icons.account_balance_wallet_outlined, color: c.onSelectedChip, size: 22),
+                  ),
+                  const SizedBox(width: Space.smd),
+                  Expanded(
+                    child: Text(l10n.onboardingPreviewLabel.toUpperCase(), style: context.text.labelMedium),
+                  ),
+                  TagPill(label: l10n.onboardingPreviewOnTrack, dot: true, background: c.accent, foreground: c.onAccent),
                 ],
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: Space.sm),
-          if (showLiveTag)
-            TagPill(label: liveLabel, icon: Icons.swap_horiz_rounded, foreground: c.accentStrong, uppercase: true)
-          else
-            Icon(Icons.east_rounded, size: 20, color: c.muted),
-        ],
-      ),
-    );
-  }
-}
-
-class _HomeBalanceCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final c = context.colors;
-    return Container(
-      padding: const EdgeInsets.all(Space.margin),
-      decoration: BoxDecoration(
-        color: c.card,
-        borderRadius: Radii.lgAll,
-        border: Border.all(color: c.hairline),
-        gradient: RadialGradient(
-          center: AlignmentDirectional.topEnd.resolve(Directionality.of(context)),
-          radius: 1.2,
-          colors: [c.glow, c.card],
-        ),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 32, offset: const Offset(0, 12))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(color: c.selectedChip, shape: BoxShape.circle),
-                child: Icon(Icons.account_balance_wallet_outlined, color: c.onSelectedChip, size: 22),
+              const SizedBox(height: Space.md),
+              HeroAmount(
+                Money(485000, mad),
+                smallFraction: true,
+                animateFromZero: true,
+                style: AppTypography.heroXl,
               ),
-              const SizedBox(width: Space.smd),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.onboardingHomeBalance.toUpperCase(), style: context.text.labelMedium),
-                    Text(l10n.onboardingConsolidated, style: context.text.titleSmall),
-                  ],
+              const SizedBox(height: Space.md),
+              const AppProgressBar(value: 0.62),
+              const SizedBox(height: Space.md),
+              for (final (glyph, color, name, amount) in rows)
+                Padding(
+                  padding: const EdgeInsets.only(top: Space.sm),
+                  child: Row(
+                    children: [
+                      CategoryIcon(glyph: glyph, color: color, size: 36),
+                      const SizedBox(width: Space.smd),
+                      Expanded(child: Text(name, style: context.text.titleSmall)),
+                      Text(
+                        context.money.format(amount, display: MoneyDisplay.code, trimZeroFraction: true),
+                        style: AppTypography.labelCode.copyWith(color: c.ink, fontSize: 13),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              TagPill(label: l10n.onboardingSynced, dot: true, background: c.accent, foreground: c.onAccent),
             ],
           ),
-          const SizedBox(height: Space.md),
-          HeroAmount(
-            Money(148620, CurrencyCatalog.of('USD')),
-            currencyStyle: HeroCurrencyStyle.prefixSymbol,
-            smallFraction: true,
-            animateFromZero: true,
-            style: AppTypography.heroXl,
-          ),
-          const SizedBox(height: Space.md),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: Space.md, vertical: Space.smd),
-            decoration: BoxDecoration(color: c.recessed, borderRadius: Radii.mdAll),
-            child: Row(
-              children: [
-                Icon(Icons.auto_awesome_outlined, size: 18, color: c.accentStrong),
-                const SizedBox(width: Space.sm),
-                Expanded(child: Text(l10n.onboardingRateNote, style: context.text.bodyMedium)),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
