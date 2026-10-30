@@ -1,6 +1,9 @@
 # Codemagic CI for Flossi — https://docs.codemagic.io/yaml-quick-start/building-a-flutter-app/
 #
-# Two iOS workflows:
+# Workflows:
+#   android-apk   Release APK (debug-signed) you can install on any Android
+#                 phone for testing.
+# iOS:
 #   ios-unsigned  No Apple account needed. Produces an UNSIGNED .ipa
 #                 (for inspection or re-signing with your own tools; it
 #                 cannot be installed on an iPhone as-is).
@@ -22,6 +25,23 @@ definitions:
       ignore_failure: true
 
 workflows:
+  android-apk:
+    name: Android (APK)
+    max_build_duration: 45
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+      java: 17
+    scripts:
+      - *prepare
+      - *unit_tests
+      - name: Build release APK
+        # Signed with the debug key: installable on any phone for testing.
+        # Google Play needs an upload keystore and an .aab (see README).
+        script: flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+
   ios-unsigned:
     name: iOS (unsigned IPA)
     max_build_duration: 60
