@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flossi Expense Tracker</title>
+<meta name="description" content="Flossi is a calm, private expense tracker. Log spending in seconds, set a monthly budget and see where your money goes. Coming soon on Google Play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Layout idea: the app's paper-and-lime design system, set as a magazine
+     spread — oversized ExtraBold headlines with tight tracking, a live
+     "add an expense" demo as the centrepiece, and one ink-black privacy band. */
+  :root {
+    --paper: #F9F8F2;      /* canvas */
+    --card: #FFFFFF;
+    --ink: #111111;
+    --muted: #6B6B64;
+    --line: #E6E6E1;
+    --recess: #EFEFEA;
+    --lime: #C6F432;       /* the one accent */
+    --olive: #506600;      /* accent that reads as text on paper */
+    --expense: #C92A2A;
+    --display: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --body: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --r-card: 24px;
+    --r-pill: 999px;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  img, svg { max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--olive); outline-offset: 3px; border-radius: 8px; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  .wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav .wrap { display: flex; align-items: center; gap: 24px; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 21px; letter-spacing: -0.02em; }
+  .tile {
+    width: 34px; height: 34px; border-radius: 11px; background: var(--lime);
+    display: grid; place-items: center; font-weight: 800; font-size: 24px; line-height: 1; color: var(--ink);
+  }
+  .nav-links { display: flex; gap: 22px; margin-inline-start: auto; font-weight: 600; font-size: 15px; }
+  .nav-links a { text-decoration: none; color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); }
+
+  .play {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--ink); color: #fff; text-decoration: none;
+    border-radius: 16px; padding: 10px 18px 10px 14px;
+  }
+  .play svg { width: 26px; height: 26px; flex: none; }
+  .play small { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; opacity: .7; line-height: 1.2; }
+  .play strong { display: block; font-size: 18px; font-weight: 700; line-height: 1.2; }
+  .nav .play { padding: 6px 14px 6px 10px; border-radius: 12px; }
+  .nav .play strong { font-size: 14px; }
+  .nav .play small { font-size: 9px; }
+  .nav .play svg { width: 20px; height: 20px; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 72px 0 56px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--recess); border-radius: var(--r-pill); padding: 7px 14px;
+  }
+  .eyebrow i { width: 8px; height: 8px; border-radius: 50%; background: var(--olive); }
+  .hero h1 {
+    margin-top: 22px;
+    font-weight: 800;
+    font-size: clamp(48px, 7.4vw, 96px);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+  }
+  .hero h1 mark { background: linear-gradient(transparent 58%, var(--lime) 58%); color: inherit; padding: 0 .04em; }
+  .hero .lede { margin-top: 24px; max-width: 34ch; font-size: 20px; color: var(--muted); }
+  .hero .cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .ghost {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700;
+    border: 1px solid var(--line); background: var(--card); border-radius: var(--r-pill); padding: 14px 22px;
+  }
+  .ghost:hover { border-color: var(--ink); }
+  .facts { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 10px 28px; color: var(--muted); font-size: 15px; font-weight: 600; }
+  .facts span::before { content: "✓"; color: var(--olive); font-weight: 800; margin-inline-end: 8px; }
+
+  /* Phone */
+  .phone {
+    justify-self: center;
+    width: min(360px, 100%);
+    background: var(--ink);
+    border-radius: 48px;
+    padding: 12px;
+    box-shadow: 0 40px 80px -30px rgba(17,17,17,.45), 0 0 0 1px rgba(0,0,0,.05);
+    transform: rotate(2.5deg);
+  }
+  .screen { background: var(--paper); border-radius: 37px; padding: 22px 16px 16px; overflow: hidden; }
+  .s-top { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+  .s-top .brand { font-size: 16px; gap: 7px; }
+  .s-top .tile { width: 24px; height: 24px; font-size: 17px; border-radius: 8px; }
+  .s-chip { font-size: 12px; font-weight: 700; background: var(--recess); border-radius: var(--r-pill); padding: 6px 10px; }
+  .s-greet { padding: 14px 4px 10px; }
+  .s-greet small { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+  .s-greet b { display: block; font-size: 21px; letter-spacing: -0.02em; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); }
+  .s-hero { padding: 16px; background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--lime) 28%, transparent), var(--card) 60%); }
+  .s-hero small { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+  .s-amount { display: flex; align-items: baseline; gap: 8px; margin: 6px 0 12px; font-weight: 800; letter-spacing: -0.035em; font-size: 38px; line-height: 1; }
+  .badge { font-size: 11px; font-weight: 700; letter-spacing: .06em; background: var(--ink); color: #fff; border-radius: var(--r-pill); padding: 4px 9px; }
+  .bar { height: 9px; border-radius: var(--r-pill); background: var(--recess); overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--lime); border-radius: inherit; transition: width .6s cubic-bezier(.2,.8,.2,1); }
+  .bar.warn > i { background: var(--expense); }
+  .s-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+  .rows { display: grid; gap: 8px; margin-top: 10px; }
+  .row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+  .row .ic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; flex: none; }
+  .row b { font-size: 13.5px; display: block; line-height: 1.2; }
+  .row small { font-size: 11px; color: var(--muted); }
+  .row .amt { margin-inline-start: auto; font-weight: 700; font-size: 13.5px; color: var(--expense); white-space: nowrap; }
+  .row.new { animation: pop .5s cubic-bezier(.2,.8,.2,1); }
+  @keyframes pop { from { transform: translateY(-8px) scale(.97); background: color-mix(in srgb, var(--lime) 35%, var(--card)); } }
+  .s-nav {
+    margin-top: 12px; background: var(--ink); color: #d9d9d2; border-radius: var(--r-pill);
+    display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 6px; font-size: 10px; font-weight: 600; text-align: center;
+  }
+  .s-nav .on { color: var(--lime); }
+  .s-nav .plus { width: 40px; height: 40px; margin: -2px auto; border-radius: 50%; background: var(--lime); color: var(--ink); display: grid; place-items: center; font-size: 24px; font-weight: 500; }
+
+  /* ---------- Section scaffolding ---------- */
+  section { padding: 96px 0; }
+  .kicker { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--olive); }
+  .h2 { margin-top: 12px; font-weight: 800; font-size: clamp(34px, 4.6vw, 56px); line-height: 1.02; letter-spacing: -0.035em; max-width: 18ch; }
+  .sub { margin-top: 16px; color: var(--muted); font-size: 19px; max-width: 52ch; }
+
+  /* ---------- Demo ---------- */
+  .demo { background: var(--card); border-block: 1px solid var(--line); }
+  .demo-grid { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 32px; align-items: start; }
+  .adder { padding: 20px; border-radius: 32px; background: var(--paper); border: 1px solid var(--line); }
+  .adder-amount {
+    text-align: center; padding: 18px 12px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card);
+  }
+  .adder-amount small { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
+  .adder-amount output { display: block; margin-top: 6px; font-weight: 800; font-size: 46px; letter-spacing: -0.035em; line-height: 1.05; }
+  .adder-amount output.zero { color: #B3B3AA; }
+  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; }
+  .cat {
+    font: inherit; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 10px 4px 8px;
+    display: grid; justify-items: center; gap: 6px;
+  }
+  .cat span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; }
+  .cat[aria-pressed="true"] { border-color: var(--lime); border-width: 2.5px; color: var(--ink); }
+  .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .key {
+    font: inherit; font-size: 22px; font-weight: 500; cursor: pointer; height: 52px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--r-pill); color: var(--ink);
+    transition: transform .12s ease;
+  }
+  .key:active { transform: scale(.96); }
+  .save {
+    margin-top: 12px; width: 100%; height: 56px; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer;
+    background: var(--lime); color: var(--ink); border: 0; border-radius: var(--r-pill);
+  }
+  .save:disabled { background: var(--recess); color: #9A9A92; cursor: not-allowed; }
+  .result { padding: 24px; }
+  .result h3 { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .result .s-amount { font-size: clamp(40px, 5vw, 56px); margin: 10px 0 16px; }
+  .result .s-meta { font-size: 14px; }
+  .result .rows { margin-top: 18px; }
+  .result .row { padding: 12px 14px; }
+  .result .row b { font-size: 15px; }
+  .result .row .amt { font-size: 15px; }
+  .alert {
+    display: none; margin-top: 14px; padding: 12px 14px; border-radius: 16px;
+    background: #FFE3E3; color: var(--expense); font-weight: 700; font-size: 14px;
+  }
+  .alert.show { display: block; }
+  .reset-demo { margin-top: 14px; background: none; border: 0; font: inherit; font-weight: 700; color: var(--olive); cursor: pointer; padding: 6px 0; }
+
+  /* ---------- Features (bento) ---------- */
+  .bento { margin-top: 48px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .f { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
+  .f h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+  .f p { color: var(--muted); font-size: 16px; }
+  .f .vis { margin-top: auto; padding-top: 14px; }
+  .span3 { grid-column: span 3; } .span2 { grid-column: span 2; } .span4 { grid-column: span 4; }
+  .f.lime { background: var(--lime); border-color: transparent; }
+  .f.lime p { color: #2F3A00; }
+  .f.recess { background: var(--recess); border-color: transparent; }
+  .weeks { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 96px; }
+  .weeks i { display: block; border-radius: var(--r-pill); background: var(--ink); }
+  .weeks i.today { background: var(--olive); }
+  .weeks i.later { background: rgba(17,17,17,.12); }
+  .weeklbl { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 6px; font-size: 12px; font-weight: 700; text-align: center; color: #2F3A00; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; }
+  .legend span { font-size: 13px; font-weight: 600; background: var(--recess); border-radius: var(--r-pill); padding: 5px 11px; display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 8px; height: 8px; border-radius: 50%; }
+  .langs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .langs span { font-weight: 700; font-size: 15px; border: 1px solid var(--line); background: var(--card); border-radius: var(--r-pill); padding: 8px 14px; }
+  .search { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: var(--r-pill); padding: 12px 16px; color: var(--muted); font-size: 15px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chips span { font-size: 13px; font-weight: 700; border-radius: var(--r-pill); padding: 6px 12px; background: var(--card); border: 1px solid var(--line); }
+  .chips span.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .csv { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.6; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+
+  /* ---------- Steps ---------- */
+  .steps { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+  .step { padding: 28px; border-top: 3px solid var(--ink); }
+  .step::before { counter-increment: step; content: "0" counter(step); display: block; font-weight: 800; font-size: 15px; letter-spacing: .04em; color: var(--olive); margin-bottom: 18px; }
+  .step h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+  .step p { margin-top: 10px; color: var(--muted); }
+  .step .pills { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .step .pills span { font-size: 13px; font-weight: 700; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-pill); padding: 6px 12px; }
+  .step .pills span.on { background: var(--lime); border-color: var(--lime); }
+
+  /* ---------- Privacy band ---------- */
+  .privacy { background: var(--ink); color: #F2F1E8; }
+  .privacy .kicker { color: var(--lime); }
+  .privacy .sub { color: #B9B9B0; }
+  .privacy-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #2E2F29; border: 1px solid #2E2F29; border-radius: var(--r-card); overflow: hidden; }
+  .privacy-grid div { background: var(--ink); padding: 26px; }
+  .privacy-grid b { display: block; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; color: #fff; }
+  .privacy-grid p { margin-top: 8px; color: #A9A9A0; font-size: 15px; }
+
+  /* ---------- FAQ ---------- */
+  .faq { margin-top: 40px; display: grid; gap: 12px; max-width: 820px; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 0 22px; }
+  summary { cursor: pointer; list-style: none; padding: 20px 0; font-weight: 700; font-size: 18px; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 24px; line-height: 1; color: var(--olive); }
+  details[open] summary::after { content: "–"; }
+  details p { padding-bottom: 20px; color: var(--muted); max-width: 65ch; }
+
+  /* ---------- Closing ---------- */
+  .closing { text-align: start; }
+  .closing .box { padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; background: var(--lime); border-radius: 36px; }
+  .closing h2 { font-weight: 800; font-size: clamp(32px, 4.4vw, 54px); line-height: 1.02; letter-spacing: -0.035em; }
+  .closing p { margin-top: 12px; color: #2F3A00; font-size: 18px; max-width: 46ch; }
+  footer { padding: 36px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .hero .wrap, .demo-grid { grid-template-columns: 1fr; }
+    .phone { transform: none; }
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .span2, .span3, .span4 { grid-column: span 2; }
+    .privacy-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: 1fr; }
+    .closing .box { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav .play { margin-inline-start: auto; }
+    section { padding: 72px 0; }
+    .hero { padding-top: 44px; }
+    .privacy-grid { grid-template-columns: 1fr; }
+    .bento { grid-template-columns: 1fr; }
+    .span2, .span3, .span4 { grid-column: span 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Flossi home"><span class="tile" aria-hidden="true">f</span>Flossi</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#try">Try it</a>
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <span class="play" role="note" aria-label="Coming soon on Google Play">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C6F432" d="M4 2.8v18.4c0 .6.6 1 1.2.7l15.2-8.6c.6-.3.6-1.1 0-1.4L5.2 3.2C4.6 2.8 4 3.2 4 3.8z"/></svg>
+      <span><small>Coming soon</small><strong>Google Play</strong></span>
+    </span>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><i aria-hidden="true"></i>Launching soon on Android</span>
+        <h1 id="hero-title">Every expense. Tracked with <mark>elegance.</mark></h1>
+        <p class="lede">Flossi is a calm, private expense tracker. Log what you spend in seconds, set a monthly budget and see exactly where your money goes.</p>
+        <div class="cta">
+          <span class="play" role="note" aria-label="Coming soon on Google Play">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C6F432" d="M4 2.8v18.4c0 .6.6 1 1.2.7l15.2-8.6c.6-.3.6-1.1 0-1.4L5.2 3.2C4.6 2.8 4 3.2 4 3.8z"/></svg>
+            <span><small>Coming soon on</small><strong>Google Play</strong></span>
+          </span>
+          <a class="ghost" href="#try">Try the 3-tap entry <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="facts">
+          <span>No account</span><span>Works offline</span><span>English · Français · العربية</span>
+        </div>
+      </div>
+
+      <div class="phone" aria-label="Flossi home screen preview">
+        <div class="screen">
+          <div class="s-top">
+            <span class="brand"><span class="tile" aria-hidden="true">f</span>Flossi</span>
+            <span class="s-chip">🇲🇦 MAD</span>
+          </div>
+          <div class="s-greet"><small>Wednesday, 28 October</small><b>Good morning</b></div>
+          <div class="card s-hero">
+            <small>Total spent this month</small>
+            <div class="s-amount num"><span>4,850.00</span><span class="badge">MAD</span></div>
+            <div class="bar"><i style="width:61%"></i></div>
+            <div class="s-meta"><span class="num">4,850 / 8,000 MAD</span><span class="num">3,150 left</span></div>
+          </div>
+          <div class="rows">
+            <div class="card row"><span class="ic" style="background:#FFF3C4">☕</span><div><b>Espresso Lab</b><small>Dining · 09:42</small></div><span class="amt num">−45.00 MAD</span></div>
+            <div class="card row"><span class="ic" style="background:#D6F5EC">🛒</span><div><b>Marjane</b><small>Groceries · Yesterday</small></div><span class="amt num">−380.20 MAD</span></div>
+            <div class="card row"><span class="ic" style="background:#FFE6D1">🚕</span><div><b>Petit taxi</b><small>Transport · Mon</small></div><span class="amt num">−25.00 MAD</span></div>
+          </div>
+          <div class="s-nav" aria-hidden="true"><span class="on">Home</span><span>History</span><span class="plus">+</span><span>Stats</span><span>Settings</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive demo -->
+  <section class="demo" id="try" aria-labelledby="try-title">
+    <div class="wrap">
+      <p class="kicker">Try it right here</p>
+      <h2 class="h2" id="try-title">Amount, category, save. That’s an expense.</h2>
+      <p class="sub">This is the same flow as in the app. Type an amount on the keypad, pick a category and save. The month updates against an 8,000 MAD budget.</p>
+
+      <div class="demo-grid">
+        <div class="adder" aria-label="Add expense demo">
+          <div class="adder-amount">
+            <small>OUTFLOW</small>
+            <output id="amount" class="num zero" aria-live="polite">0.00 MAD</output>
+          </div>
+          <div class="cats" role="group" aria-label="Category">
+            <button type="button" class="cat" id="cat-dining" data-cat="Dining" data-emoji="🍜" data-tint="#FFF3C4" aria-pressed="true"><span style="background:#FFF3C4">🍜</span>Dining</button>
+            <button type="button" class="cat" id="cat-groceries" data-cat="Groceries" data-emoji="🛒" data-tint="#D6F5EC" aria-pressed="false"><span style="background:#D6F5EC">🛒</span>Groceries</button>
+            <button type="button" class="cat" id="cat-transport" data-cat="Transport" data-emoji="🚕" data-tint="#FFE6D1" aria-pressed="false"><span style="background:#FFE6D1">🚕</span>Transport</button>
+            <button type="button" class="cat" id="cat-shopping" data-cat="Shopping" data-emoji="🛍️" data-tint="#FFE0E6" aria-pressed="false"><span style="background:#FFE0E6">🛍️</span>Shopping</button>
+          </div>
+          <div class="keys" role="group" aria-label="Keypad">
+            <button type="button" class="key" id="k1" data-k="1">1</button>
+            <button type="button" class="key" id="k2" data-k="2">2</button>
+            <button type="button" class="key" id="k3" data-k="3">3</button>
+            <button type="button" class="key" id="k4" data-k="4">4</button>
+            <button type="button" class="key" id="k5" data-k="5">5</button>
+            <button type="button" class="key" id="k6" data-k="6">6</button>
+            <button type="button" class="key" id="k7" data-k="7">7</button>
+            <button type="button" class="key" id="k8" data-k="8">8</button>
+            <button type="button" class="key" id="k9" data-k="9">9</button>
+            <button type="button" class="key" id="kdot" data-k=".">.</button>
+            <button type="button" class="key" id="k0" data-k="0">0</button>
+            <button type="button" class="key" id="kback" data-k="back" aria-label="Delete last digit">⌫</button>
+          </div>
+          <button type="button" class="save" id="save" disabled>Save expense →</button>
+        </div>
+
+        <div class="card result" aria-live="polite">
+          <h3>Total spent this month</h3>
+          <div class="s-amount num"><span id="total">4,850.00</span><span class="badge">MAD</span></div>
+          <div class="bar" id="bar"><i id="bar-fill"></i></div>
+          <div class="s-meta"><span class="num" id="of">4,850 / 8,000 MAD (61%)</span><span class="num" id="left">3,150.00 MAD left</span></div>
+          <div class="alert" id="alert">Heads-up: you have used 80% of your monthly budget.</div>
+          <div class="rows" id="rows">
+            <div class="card row"><span class="ic" style="background:#FFF3C4">☕</span><div><b>Espresso Lab</b><small>Dining · 09:42</small></div><span class="amt num">−45.00 MAD</span></div>
+            <div class="card row"><span class="ic" style="background:#D6F5EC">🛒</span><div><b>Marjane</b><small>Groceries · Yesterday</small></div><span class="amt num">−380.20 MAD</span></div>
+          </div>
+          <button type="button" class="reset-demo" id="reset">Reset the demo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" aria-labelledby="features-title">
+    <div class="wrap">
+      <p class="kicker">What’s inside</p>
+      <h2 class="h2" id="features-title">Everything a monthly budget needs. Nothing it doesn’t.</h2>
+
+      <div class="bento">
+        <article class="card f lime span3">
+          <h3>A budget that keeps pace with you</h3>
+          <p>Set a monthly cap at setup. Flossi shows what’s left, your safe daily pace, and a gentle heads-up at 80%.</p>
+          <div class="vis" aria-hidden="true">
+            <div class="weeks"><i style="height:38%"></i><i style="height:70%"></i><i class="today" style="height:100%"></i><i class="later" style="height:16%"></i><i class="later" style="height:16%"></i><i class="later" style="height:16%"></i><i class="later" style="height:16%"></i></div>
+            <div class="weeklbl"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          </div>
+        </article>
+
+        <article class="card f span3">
+          <h3>See where it goes</h3>
+          <p>Stats by week, month or year: a category breakdown you can tap into, your spending over time, and your top categories.</p>
+          <div class="vis" style="display:flex; gap:20px; align-items:center; flex-wrap:wrap" aria-hidden="true">
+            <svg width="112" height="112" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#EFEFEA" stroke-width="6"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#20C997" stroke-width="6" stroke-dasharray="34 66" stroke-dashoffset="25"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#FCC419" stroke-width="6" stroke-dasharray="25 75" stroke-dashoffset="91"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#339AF0" stroke-width="6" stroke-dasharray="15 85" stroke-dashoffset="66"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="#FF6B81" stroke-width="6" stroke-dasharray="14 86" stroke-dashoffset="51"/>
+            </svg>
+            <div class="legend">
+              <span><i style="background:#20C997"></i>Groceries 34%</span>
+              <span><i style="background:#FCC419"></i>Dining 25%</span>
+              <span><i style="background:#339AF0"></i>Travel 15%</span>
+              <span><i style="background:#FF6B81"></i>Shopping 14%</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card f span2">
+          <h3>Your categories, your caps</h3>
+          <p>16 ready-made categories. Add your own with an emoji and colour, and give any of them a monthly cap with “Near cap” warnings.</p>
+        </article>
+
+        <article class="card f recess span2">
+          <h3>Find anything</h3>
+          <p>History grouped by day, with search and filters. Swipe to delete, tap Undo if you didn’t mean it.</p>
+          <div class="vis" aria-hidden="true">
+            <div class="search">⌕ <span>Search “taxi”</span></div>
+            <div class="chips"><span class="on">This month</span><span>Transport</span><span>Expenses</span></div>
+          </div>
+        </article>
+
+        <article class="card f span2">
+          <h3>Speaks your language</h3>
+          <p>Full English, French and Arabic, with a right-to-left layout for Arabic.</p>
+          <div class="vis langs" aria-hidden="true"><span>English</span><span>Français</span><span>العربية</span></div>
+        </article>
+
+        <article class="card f span4">
+          <h3>Your data, exportable any time</h3>
+          <p>Export every transaction to a CSV file that opens in Excel, Numbers or Google Sheets.</p>
+          <div class="vis csv" aria-label="CSV example">Date,Type,Title,Category,Amount,Currency
+2026-10-28 09:42,Expenses,Espresso Lab,Dining,-45.00,MAD
+2026-10-27 18:10,Expenses,Marjane,Groceries,-380.20,MAD</div>
+        </article>
+
+        <article class="card f span2">
+          <h3>Light, dark, or automatic</h3>
+          <p>Follows your phone’s setting, or pick one in Settings.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="demo" aria-labelledby="how-title">
+    <div class="wrap">
+      <p class="kicker">Set up in under a minute</p>
+      <h2 class="h2" id="how-title">Three steps, then you’re tracking.</h2>
+      <div class="steps">
+        <div class="card step">
+          <h3>Choose your currency</h3>
+          <p>Pick the currency you spend in. All your totals and charts use it.</p>
+          <div class="pills"><span class="on">🇲🇦 MAD</span><span>🇪🇺 EUR</span><span>🇺🇸 USD</span><span>60+ more</span></div>
+        </div>
+        <div class="card step">
+          <h3>Set a monthly target</h3>
+          <p>Choose a quick preset or type your own. Skip it if you just want to track.</p>
+          <div class="pills"><span>5,000</span><span class="on">8,000 MAD</span><span>No budget</span></div>
+        </div>
+        <div class="card step">
+          <h3>Log as you go</h3>
+          <p>Tap +, type the amount, pick a category, save. Your month updates instantly.</p>
+          <div class="pills"><span>Card</span><span class="on">Cash</span><span>Transfer</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="privacy" id="privacy" aria-labelledby="privacy-title">
+    <div class="wrap">
+      <p class="kicker">Private by design</p>
+      <h2 class="h2" id="privacy-title">Your money stays on your phone.</h2>
+      <p class="sub">Flossi has no servers storing your finances. Your expenses live in a database on your phone, and you can lock the app so only you can open it.</p>
+      <div class="privacy-grid">
+        <div><b>No account</b><p>No sign-up, no email, no password to remember.</p></div>
+        <div><b>Works offline</b><p>Add, edit and review expenses with no connection.</p></div>
+        <div><b>Face ID &amp; fingerprint</b><p>Lock the app so only you can open it.</p></div>
+        <div><b>No ads, no trackers</b><p>Nothing about your spending leaves the device.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <p class="kicker">Questions</p>
+      <h2 class="h2" id="faq-title">Good to know</h2>
+      <div class="faq">
+        <details id="faq-when"><summary>When can I download Flossi?</summary><p>Flossi is coming soon to Google Play for Android phones. This page will link to the store listing as soon as it’s live.</p></details>
+        <details id="faq-currency"><summary>Which currencies can I use?</summary><p>You choose your currency during setup: Moroccan Dirham, Euro, US Dollar and more than 60 others. You can change it later in Settings.</p></details>
+        <details id="faq-offline"><summary>Do I need an internet connection?</summary><p>No. Everything you do in Flossi works offline, and your data is stored on your phone.</p></details>
+        <details id="faq-backup"><summary>How do I keep a copy of my data?</summary><p>Go to Settings → Export transactions to save a CSV file of everything you’ve recorded. Keep it wherever you like.</p></details>
+        <details id="faq-lang"><summary>Which languages are supported?</summary><p>English, French and Arabic. Flossi can follow your phone’s language or you can pick one in Settings.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing -->
+  <section class="closing" aria-labelledby="closing-title" style="padding-top:0">
+    <div class="wrap">
+      <div class="box">
+        <div>
+          <h2 id="closing-title">Start your month with Flossi.</h2>
+          <p>Coming soon to Google Play. Simple to start, calm to use, and private from day one.</p>
+        </div>
+        <span class="play" role="note" aria-label="Coming soon on Google Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#C6F432" d="M4 2.8v18.4c0 .6.6 1 1.2.7l15.2-8.6c.6-.3.6-1.1 0-1.4L5.2 3.2C4.6 2.8 4 3.2 4 3.8z"/></svg>
+          <span><small>Coming soon on</small><strong>Google Play</strong></span>
+        </span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand" style="font-size:17px"><span class="tile" aria-hidden="true" style="width:26px;height:26px;font-size:18px;border-radius:9px">f</span>Flossi</span>
+    <span>© 2026 Flossi · Crafted with precision in Casablanca</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    // Demo state in integer cents (the app never uses floating point for money).
+    const BUDGET = 800000;          // 8,000.00 MAD
+    const START = 485000;           // 4,850.00 MAD already spent
+    const MAX_INT_DIGITS = 7;
+
+    let raw = '';                   // keypad buffer, '.' as separator
+    let total = START;
+    let category = document.getElementById('cat-dining');
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = (cents) => {
+      const neg = cents < 0;
+      const abs = Math.abs(cents);
+      const whole = Math.floor(abs / 100).toLocaleString('en-US');
+      const frac = String(abs % 100).padStart(2, '0');
+      return (neg ? '−' : '') + whole + '.' + frac;
+    };
+    const toCents = (s) => {
+      if (!s) return 0;
+      const [i, f = ''] = s.split('.');
+      return parseInt(i || '0', 10) * 100 + parseInt((f + '00').slice(0, 2), 10);
+    };
+
+    function renderInput() {
+      const cents = toCents(raw);
+      const out = $('amount');
+      out.textContent = fmt(cents) + ' MAD';
+      out.classList.toggle('zero', cents === 0);
+      $('save').disabled = cents === 0;
+    }
+
+    function renderMonth() {
+      const pct = Math.round((total / BUDGET) * 100);
+      $('total').textContent = fmt(total);
+      $('bar-fill').style.width = Math.min(pct, 100) + '%';
+      $('bar').classList.toggle('warn', pct >= 100);
+      $('of').textContent = Math.floor(total / 100).toLocaleString('en-US') + ' / 8,000 MAD (' + pct + '%)';
+      const left = BUDGET - total;
+      $('left').textContent = left >= 0 ? fmt(left) + ' MAD left' : fmt(-left) + ' MAD over';
+      $('alert').classList.toggle('show', pct >= 80);
+    }
+
+    document.querySelectorAll('.key').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.k;
+        if (k === 'back') raw = raw.slice(0, -1);
+        else if (k === '.') { if (!raw.includes('.')) raw = (raw || '0') + '.'; }
+        else {
+          const [i, f] = raw.split('.');
+          if (f !== undefined) { if (f.length < 2) raw += k; }
+          else if (raw === '0') raw = k;
+          else if ((i || '').length < MAX_INT_DIGITS) raw += k;
+        }
+        renderInput();
+      });
+    });
+
+    document.querySelectorAll('.cat').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        category.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-pressed', 'true');
+        category = btn;
+      });
+    });
+
+    $('save').addEventListener('click', () => {
+      const cents = toCents(raw);
+      if (!cents) return;
+      total += cents;
+      const row = document.createElement('div');
+      row.className = 'card row new';
+      const ic = document.createElement('span');
+      ic.className = 'ic';
+      ic.style.background = category.dataset.tint;
+      ic.textContent = category.dataset.emoji;
+      const info = document.createElement('div');
+      const b = document.createElement('b');
+      b.textContent = category.dataset.cat;
+      const sm = document.createElement('small');
+      sm.textContent = category.dataset.cat + ' · Just now';
+      info.append(b, sm);
+      const amt = document.createElement('span');
+      amt.className = 'amt num';
+      amt.textContent = '−' + fmt(cents) + ' MAD';
+      row.append(ic, info, amt);
+      $('rows').prepend(row);
+      raw = '';
+      renderInput();
+      renderMonth();
+    });
+
+    $('reset').addEventListener('click', () => {
+      total = START;
+      raw = '';
+      document.querySelectorAll('#rows .row.new').forEach((r) => r.remove());
+      renderInput();
+      renderMonth();
+    });
+
+    renderInput();
+    renderMonth();
+  })();
+</script>
+</body>
+</html>
