@@ -63,9 +63,11 @@ class _BudgetStepScreenState extends ConsumerState<BudgetStepScreen> {
                   const SizedBox(width: Space.sm),
                   const Expanded(child: Center(child: StepPill(step: 3, total: 3))),
                   const SizedBox(width: Space.sm),
-                  TextButton(
-                    onPressed: _saving ? null : () => _finish(skip: true),
-                    child: Text(l10n.budgetSkip),
+                  Flexible(
+                    child: TextButton(
+                      onPressed: _saving ? null : () => _finish(skip: true),
+                      child: Text(l10n.budgetSkip, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
                   ),
                 ],
               ),

@@ -63,6 +63,7 @@ class TransactionTile extends StatelessWidget {
           ),
           const SizedBox(width: Space.md),
           Expanded(
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -83,21 +84,31 @@ class TransactionTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: Space.sm),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                converted ? '≈ $primary' : primary,
-                maxLines: 1,
-                style: AppTypography.amount.copyWith(color: amountColor),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                secondary,
-                maxLines: 1,
-                style: AppTypography.labelCode.copyWith(color: c.muted, fontSize: 12),
-              ),
-            ],
+          // Amounts shrink to fit rather than being cut off.
+          Flexible(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    converted ? '≈ $primary' : primary,
+                    maxLines: 1,
+                    style: AppTypography.amount.copyWith(color: amountColor),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    secondary,
+                    maxLines: 1,
+                    style: AppTypography.labelCode.copyWith(color: c.muted, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

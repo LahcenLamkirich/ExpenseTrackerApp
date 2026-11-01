@@ -68,9 +68,16 @@ class CurrenciesScreen extends ConsumerWidget {
                     Row(
                       children: [
                         Expanded(child: Text(l10n.currenciesTracking, style: context.text.headlineSmall)),
-                        TagPill(label: l10n.currenciesActive(active), uppercase: true),
+                        Flexible(child: TagPill(label: l10n.currenciesActive(active), uppercase: true)),
                         const SizedBox(width: Space.sm),
-                        Text(l10n.currenciesBaseUnit(home.code), style: context.text.bodySmall),
+                        Flexible(
+                          child: Text(
+                            l10n.currenciesBaseUnit(home.code),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.bodySmall,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: Space.md),
@@ -144,11 +151,20 @@ class _BaseCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              TagPill(label: l10n.currenciesPrimaryBase, background: c.accent, foreground: c.onAccent, uppercase: true),
+              Flexible(
+                child: TagPill(label: l10n.currenciesPrimaryBase, background: c.accent, foreground: c.onAccent, uppercase: true),
+              ),
               const SizedBox(width: Space.sm),
               Icon(Icons.lock_outline_rounded, size: 16, color: c.income),
               const SizedBox(width: Space.xs),
-              Text(l10n.currenciesLocked, style: context.text.titleSmall?.copyWith(color: c.income)),
+              Flexible(
+                child: Text(
+                  l10n.currenciesLocked,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.titleSmall?.copyWith(color: c.income),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: Space.md),

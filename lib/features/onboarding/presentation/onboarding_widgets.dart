@@ -23,31 +23,31 @@ class StepPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(color: c.recessed, borderRadius: Radii.pillAll),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 1; i <= total; i++) ...[
-              AnimatedContainer(
-                duration: Motion.medium,
-                width: i == step ? 18 : 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: i <= step ? c.accentStrong : c.hairline,
-                  borderRadius: Radii.pillAll,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 1; i <= total; i++) ...[
+                AnimatedContainer(
+                  duration: Motion.medium,
+                  width: i == step ? 18 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: i <= step ? c.accentStrong : c.hairline,
+                    borderRadius: Radii.pillAll,
+                  ),
                 ),
-              ),
+                const SizedBox(width: Space.xs),
+              ],
               const SizedBox(width: Space.xs),
-            ],
-            const SizedBox(width: Space.xs),
-            Flexible(
-              child: Text(
+              Text(
                 context.l10n.onboardingStep(step, total).toUpperCase(),
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 style: AppTypography.labelCaps.copyWith(color: c.ink),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -81,7 +81,14 @@ class OnboardingTag extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: fg),
           const SizedBox(width: 6),
-          Text(label.toUpperCase(), style: AppTypography.labelCaps.copyWith(color: fg)),
+          Flexible(
+            child: Text(
+              label.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTypography.labelCaps.copyWith(color: fg),
+            ),
+          ),
         ],
       ),
     );
@@ -188,12 +195,16 @@ class CurrencyChoiceCard extends StatelessWidget {
                               Flexible(child: Text(currency.code, overflow: TextOverflow.ellipsis, style: context.text.headlineMedium)),
                               if (selected) ...[
                                 const SizedBox(width: Space.sm),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                                  decoration: BoxDecoration(color: c.accent, borderRadius: Radii.pillAll),
-                                  child: Text(
-                                    context.l10n.currencyPrimaryBadge.toUpperCase(),
-                                    style: AppTypography.labelCode.copyWith(color: c.onAccent),
+                                Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                    decoration: BoxDecoration(color: c.accent, borderRadius: Radii.pillAll),
+                                    child: Text(
+                                      context.l10n.currencyPrimaryBadge.toUpperCase(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTypography.labelCode.copyWith(color: c.onAccent),
+                                    ),
                                   ),
                                 ),
                               ],

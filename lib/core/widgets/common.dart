@@ -26,7 +26,7 @@ class SectionLabel extends StatelessWidget {
             ),
           ),
         ),
-        ?trailing,
+        if (trailing != null) Flexible(child: trailing!),
       ],
     ),
   );
@@ -59,25 +59,38 @@ class TagPill extends StatelessWidget {
       decoration: BoxDecoration(color: background ?? c.recessed, borderRadius: Radii.pillAll),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (dot) ...[
-              Container(width: 6, height: 6, decoration: BoxDecoration(color: fg, shape: BoxShape.circle)),
-              const SizedBox(width: 6),
+        // Inline spans rather than a Row, so a long label ellipsizes when the
+        // pill is squeezed but it still sizes itself in an unbounded parent.
+        child: Text.rich(
+          TextSpan(
+            children: [
+              if (dot)
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    margin: const EdgeInsetsDirectional.only(end: 6),
+                    decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
+                  ),
+                ),
+              if (icon != null)
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(end: Space.xs),
+                    child: Icon(icon, size: 14, color: fg),
+                  ),
+                ),
+              TextSpan(text: uppercase ? label.toUpperCase() : label),
             ],
-            if (icon != null) ...[
-              Icon(icon, size: 14, color: fg),
-              const SizedBox(width: Space.xs),
-            ],
-            Text(
-              uppercase ? label.toUpperCase() : label,
-              style: (uppercase ? AppTypography.labelCode : AppTypography.bodySm).copyWith(
-                color: fg,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: (uppercase ? AppTypography.labelCode : AppTypography.bodySm).copyWith(
+            color: fg,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );

@@ -135,22 +135,32 @@ class _Greeting extends ConsumerWidget {
               ],
             ),
           ),
-          PressableScale(
-            child: Material(
-              color: c.recessed,
-              shape: const StadiumBorder(),
-              child: InkWell(
-                customBorder: const StadiumBorder(),
-                onTap: () => changeHomeCurrency(context, ref),
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 10, 10),
-                  child: Row(
-                    children: [
-                      Text(home.flag, style: const TextStyle(fontSize: 16)),
-                      const SizedBox(width: Space.sm),
-                      Text(l10n.dashHomeCurrency(home.code), style: context.text.titleSmall),
-                      const Icon(Icons.expand_more_rounded, size: 20),
-                    ],
+          Flexible(
+            child: PressableScale(
+              child: Material(
+                color: c.recessed,
+                shape: const StadiumBorder(),
+                child: InkWell(
+                  customBorder: const StadiumBorder(),
+                  onTap: () => changeHomeCurrency(context, ref),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(14, 10, 10, 10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(home.flag, style: const TextStyle(fontSize: 16)),
+                        const SizedBox(width: Space.sm),
+                        Flexible(
+                          child: Text(
+                            l10n.dashHomeCurrency(home.code),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.text.titleSmall,
+                          ),
+                        ),
+                        const Icon(Icons.expand_more_rounded, size: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -206,7 +216,7 @@ class _HeroCard extends ConsumerWidget {
                   style: context.text.labelMedium,
                 ),
               ),
-              TagPill(label: l10n.dashDaysLeft(data.daysLeft), uppercase: true),
+              Flexible(child: TagPill(label: l10n.dashDaysLeft(data.daysLeft), uppercase: true)),
             ],
           ),
           const SizedBox(height: Space.md),
@@ -244,7 +254,12 @@ class _HeroCard extends ConsumerWidget {
             Row(
               children: [
                 Expanded(child: Text(l10n.dashNoBudget, style: context.text.bodyMedium?.copyWith(color: c.muted))),
-                TextButton(onPressed: editBudget, child: Text(l10n.dashSetBudget)),
+                Flexible(
+                  child: TextButton(
+                    onPressed: editBudget,
+                    child: Text(l10n.dashSetBudget, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                ),
               ],
             ),
           const SizedBox(height: Space.md),
@@ -266,12 +281,14 @@ class _HeroCard extends ConsumerWidget {
               ] else
                 const Spacer(),
               if (budget != null)
-                TextButton.icon(
-                  onPressed: editBudget,
-                  iconAlignment: IconAlignment.end,
-                  icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-                  label: Text(l10n.dashBudgetDetails),
-                  style: TextButton.styleFrom(foregroundColor: c.accentStrong),
+                Flexible(
+                  child: TextButton.icon(
+                    onPressed: editBudget,
+                    iconAlignment: IconAlignment.end,
+                    icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                    label: Text(l10n.dashBudgetDetails, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    style: TextButton.styleFrom(foregroundColor: c.accentStrong),
+                  ),
                 ),
             ],
           ),
@@ -335,7 +352,7 @@ class _CurrencyBreakdown extends ConsumerWidget {
           ),
         ),
         SizedBox(
-          height: 132,
+          height: MediaQuery.textScalerOf(context).scale(132),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: Space.margin),
@@ -356,13 +373,26 @@ class _CurrencyBreakdown extends ConsumerWidget {
                           Text(s.currency.flag, style: const TextStyle(fontSize: 18)),
                           const SizedBox(width: Space.sm),
                           Text(s.currency.code, style: context.text.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
-                          const Spacer(),
-                          if (isHome)
-                            TagPill(label: l10n.historyDirect, background: c.accent.withValues(alpha: 0.45), foreground: c.accentStrong),
+                          const SizedBox(width: Space.sm),
+                          Expanded(
+                            child: isHome
+                                ? Align(
+                                    alignment: AlignmentDirectional.centerEnd,
+                                    child: TagPill(
+                                      label: l10n.historyDirect,
+                                      background: c.accent.withValues(alpha: 0.45),
+                                      foreground: c.accentStrong,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
                         ],
                       ),
                       const Spacer(),
-                      AmountText(s.original, style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.w800)),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: AmountText(s.original, style: AppTypography.headlineSm.copyWith(fontWeight: FontWeight.w800)),
+                      ),
                       const SizedBox(height: Space.xs),
                       Text(
                         isHome
@@ -413,15 +443,17 @@ class _WeekPace extends StatelessWidget {
                   ],
                 ),
               ),
-              TagPill(
-                icon: Icons.speed_rounded,
-                label: l10n.dashAvgPerDay(fmt.format(data.weekDailyAverage, display: MoneyDisplay.code, trimZeroFraction: true)),
+              Flexible(
+                child: TagPill(
+                  icon: Icons.speed_rounded,
+                  label: l10n.dashAvgPerDay(fmt.format(data.weekDailyAverage, display: MoneyDisplay.code, trimZeroFraction: true)),
+                ),
               ),
             ],
           ),
           const SizedBox(height: Space.lg),
           SizedBox(
-            height: 150,
+            height: MediaQuery.textScalerOf(context).scale(150),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -465,12 +497,15 @@ class _Bar extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(
-              value ?? '--',
-              maxLines: 1,
-              style: AppTypography.labelCode.copyWith(
-                color: isToday ? c.ink : c.muted,
-                fontWeight: isToday ? FontWeight.w800 : FontWeight.w600,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value ?? '--',
+                maxLines: 1,
+                style: AppTypography.labelCode.copyWith(
+                  color: isToday ? c.ink : c.muted,
+                  fontWeight: isToday ? FontWeight.w800 : FontWeight.w600,
+                ),
               ),
             ),
             const SizedBox(height: Space.xs),

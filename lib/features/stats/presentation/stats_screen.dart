@@ -238,7 +238,7 @@ class _DonutCardState extends ConsumerState<_DonutCard> {
                 Icon(Icons.donut_large_rounded, color: c.accentStrong),
                 const SizedBox(width: Space.sm),
                 Expanded(child: Text(l10n.statsCategoryDistribution, style: context.text.headlineSmall)),
-                Text(l10n.statsTapToInspect, style: context.text.bodySmall),
+                Flexible(child: Text(l10n.statsTapToInspect, textAlign: TextAlign.end, style: context.text.bodySmall)),
               ],
             ),
             const SizedBox(height: Space.md),
@@ -275,25 +275,28 @@ class _DonutCardState extends ConsumerState<_DonutCard> {
                       width: 120,
                       height: 120,
                       alignment: Alignment.center,
+                      padding: const EdgeInsets.all(Space.smd),
                       decoration: BoxDecoration(color: c.recessed, shape: BoxShape.circle),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            selectedCat == null ? '' : l10n.categoryName(selectedCat),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.text.bodySmall,
-                          ),
-                          Text(
-                            '${(selected.share * 100).round()}%',
-                            style: AppTypography.headlineMd.copyWith(color: c.ink, fontWeight: FontWeight.w800),
-                          ),
-                          Text(
-                            context.money.format(selected.amount, display: MoneyDisplay.code, trimZeroFraction: true),
-                            style: AppTypography.labelCode.copyWith(color: c.muted),
-                          ),
-                        ],
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              selectedCat == null ? '' : l10n.categoryName(selectedCat),
+                              maxLines: 1,
+                              style: context.text.bodySmall,
+                            ),
+                            Text(
+                              '${(selected.share * 100).round()}%',
+                              style: AppTypography.headlineMd.copyWith(color: c.ink, fontWeight: FontWeight.w800),
+                            ),
+                            Text(
+                              context.money.format(selected.amount, display: MoneyDisplay.code, trimZeroFraction: true),
+                              style: AppTypography.labelCode.copyWith(color: c.muted),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                 ],
@@ -379,7 +382,7 @@ class _TrendCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                TagPill(label: l10n.statsAvg(fmt.format(avg, display: MoneyDisplay.code, trimZeroFraction: true))),
+                Flexible(child: TagPill(label: l10n.statsAvg(fmt.format(avg, display: MoneyDisplay.code, trimZeroFraction: true)))),
               ],
             ),
             if (maxY > 0) ...[
@@ -550,7 +553,7 @@ class _TopCategories extends ConsumerWidget {
             Row(
               children: [
                 Expanded(child: Text(l10n.statsTopCategories, style: context.text.headlineSmall)),
-                Text(l10n.filterCategoriesCount(stats.byCategory.length), style: context.text.bodySmall),
+                Flexible(child: Text(l10n.filterCategoriesCount(stats.byCategory.length), textAlign: TextAlign.end, style: context.text.bodySmall)),
               ],
             ),
             for (final s in stats.byCategory.take(6)) ...[
@@ -578,7 +581,13 @@ class _TopCategories extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  AmountText(s.amount, display: MoneyDisplay.code, style: AppTypography.amount),
+                  const SizedBox(width: Space.sm),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: AmountText(s.amount, display: MoneyDisplay.code, style: AppTypography.amount),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: Space.sm),

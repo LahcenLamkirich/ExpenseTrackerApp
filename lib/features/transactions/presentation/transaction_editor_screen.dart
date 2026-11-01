@@ -126,6 +126,34 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
     final s = ref.watch(transactionEditorProvider(widget.transactionId)).requireValue;
     final isExpense = s.type == TransactionType.expense;
     final title = s.isEditing ? l10n.txEdit : (isExpense ? l10n.txAddExpense : l10n.txAddIncome);
+    final height = MediaQuery.sizeOf(context).height;
+    // Too short to pin the keypad (landscape phones): it scrolls with the form.
+    final scrollControls = height < 480;
+    final controls = Padding(
+      padding: const EdgeInsets.fromLTRB(Space.margin, 0, Space.margin, Space.sm),
+      child: Column(
+        children: [
+          AmountKeypad(
+            // Short screens keep room for the form above the keypad.
+            keyHeight: height < 760 ? 38 : 46,
+            decimalSeparator: context.money.decimalSeparator,
+            allowDecimal: s.currency.decimals > 0,
+            backspaceLabel: l10n.txKeypadBackspace,
+            decimalLabel: l10n.txKeypadDecimal,
+            onDigit: _controller.appendDigit,
+            onDecimal: _controller.appendDecimal,
+            onBackspace: _controller.backspace,
+            onClear: _controller.clearAmount,
+          ),
+          const SizedBox(height: Space.smd),
+          PrimaryButton(
+            label: s.isEditing ? l10n.txSaveChanges : (isExpense ? l10n.txSaveExpense : l10n.txSaveIncome),
+            loading: s.saving,
+            onPressed: s.canSave ? _save : null,
+          ),
+        ],
+      ),
+    );
 
     return Column(
       children: [
@@ -207,34 +235,11 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
                 selectedId: s.categoryId,
                 onSelected: _controller.setCategory,
               ),
+              if (scrollControls) ...[const SizedBox(height: Space.md), controls],
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Space.margin, 0, Space.margin, Space.sm),
-          child: Column(
-            children: [
-              AmountKeypad(
-                // Short screens keep room for the form above the keypad.
-                keyHeight: MediaQuery.sizeOf(context).height < 760 ? 38 : 46,
-                decimalSeparator: context.money.decimalSeparator,
-                allowDecimal: s.currency.decimals > 0,
-                backspaceLabel: l10n.txKeypadBackspace,
-                decimalLabel: l10n.txKeypadDecimal,
-                onDigit: _controller.appendDigit,
-                onDecimal: _controller.appendDecimal,
-                onBackspace: _controller.backspace,
-                onClear: _controller.clearAmount,
-              ),
-              const SizedBox(height: Space.smd),
-              PrimaryButton(
-                label: s.isEditing ? l10n.txSaveChanges : (isExpense ? l10n.txSaveExpense : l10n.txSaveIncome),
-                loading: s.saving,
-                onPressed: s.canSave ? _save : null,
-              ),
-            ],
-          ),
-        ),
+        if (!scrollControls) controls,
       ],
     );
   }
@@ -415,8 +420,8 @@ class _DateTile extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: Space.smd, vertical: Space.sm),
       radius: Radii.md,
       onTap: onTap,
-      child: SizedBox(
-        height: 46,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 46),
         child: Row(
           children: [
             Container(
@@ -468,11 +473,27 @@ class _CategoryPicker extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.margin),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.txCategory, style: context.text.titleSmall?.copyWith(color: c.muted)),
-              const Spacer(),
-              if (selected != null)
-                Text(l10n.categoryName(selected), style: context.text.titleSmall?.copyWith(color: c.accentStrong)),
+              Flexible(
+                child: Text(
+                  l10n.txCategory,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.text.titleSmall?.copyWith(color: c.muted),
+                ),
+              ),
+              if (selected != null) ...[
+                const SizedBox(width: Space.sm),
+                Flexible(
+                  child: Text(
+                    l10n.categoryName(selected),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleSmall?.copyWith(color: c.accentStrong),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

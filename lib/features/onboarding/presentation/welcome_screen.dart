@@ -181,7 +181,9 @@ class _PreviewCard extends StatelessWidget {
                   Expanded(
                     child: Text(l10n.onboardingPreviewLabel.toUpperCase(), style: context.text.labelMedium),
                   ),
-                  TagPill(label: l10n.onboardingPreviewOnTrack, dot: true, background: c.accent, foreground: c.onAccent),
+                  Flexible(
+                    child: TagPill(label: l10n.onboardingPreviewOnTrack, dot: true, background: c.accent, foreground: c.onAccent),
+                  ),
                 ],
               ),
               const SizedBox(height: Space.md),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flossi/core/router/app_router.dart';
+import 'package:flossi/core/theme/app_dimens.dart';
 import 'package:flossi/core/theme/app_theme.dart';
 import 'package:flossi/core/widgets/splash_gate.dart';
 import 'package:flossi/features/currencies/presentation/rate_providers.dart';
@@ -54,7 +55,20 @@ class _FlossiAppState extends ConsumerState<FlossiApp> {
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      builder: (context, child) => SplashGate(child: AppLockGate(child: child ?? const SizedBox.shrink())),
+      builder: (context, child) => MediaQuery.withClampedTextScaling(
+        maxScaleFactor: Sizes.maxTextScale,
+        child: SplashGate(
+          child: ColoredBox(
+            color: context.colors.canvas,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: Sizes.maxContentWidth),
+                child: AppLockGate(child: child ?? const SizedBox.shrink()),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

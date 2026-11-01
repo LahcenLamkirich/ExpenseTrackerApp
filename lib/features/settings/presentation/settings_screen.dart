@@ -361,7 +361,15 @@ class _Tile extends StatelessWidget {
                 ),
                 if (value != null) ...[
                   const SizedBox(width: Space.sm),
-                  Text(value!, style: context.text.titleSmall),
+                  Flexible(
+                    child: Text(
+                      value!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                      style: context.text.titleSmall,
+                    ),
+                  ),
                 ],
                 if (trailing != null) ...[const SizedBox(width: Space.sm), trailing!],
                 if (onTap != null && trailing == null) Icon(Icons.chevron_right_rounded, color: c.muted),

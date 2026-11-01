@@ -51,4 +51,10 @@ abstract final class Sizes {
   static const double navBarHeight = 72;
   static const double fab = 60;
   static const double minTap = 48;
+
+  /// Widest the app gets; on tablets it sits centred at this width.
+  static const double maxContentWidth = 600;
+
+  /// Largest system text size the layouts are built to hold.
+  static const double maxTextScale = 1.3;
 }

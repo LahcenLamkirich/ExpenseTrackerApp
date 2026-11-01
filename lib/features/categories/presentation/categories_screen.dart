@@ -68,12 +68,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           ],
                         ),
                       ),
-                      PrimaryButton(
-                        label: l10n.categoriesNew,
-                        expand: false,
-                        leadingIcon: Icons.add_rounded,
-                        trailingIcon: null,
-                        onPressed: () => showCategoryEditor(context, kind: _kind),
+                      Flexible(
+                        child: PrimaryButton(
+                          label: l10n.categoriesNew,
+                          expand: false,
+                          leadingIcon: Icons.add_rounded,
+                          trailingIcon: null,
+                          onPressed: () => showCategoryEditor(context, kind: _kind),
+                        ),
                       ),
                     ],
                   ),

@@ -311,9 +311,15 @@ class _DayHeader extends ConsumerWidget {
               style: AppTypography.labelCaps.copyWith(color: c.ink, fontSize: 13),
             ),
           ),
-          Text(
-            group.approximate ? '≈ $total' : total,
-            style: AppTypography.labelCode.copyWith(color: c.ink, fontSize: 12),
+          const SizedBox(width: Space.sm),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                group.approximate ? '≈ $total' : total,
+                style: AppTypography.labelCode.copyWith(color: c.ink, fontSize: 12),
+              ),
+            ),
           ),
         ],
       ),
@@ -398,9 +404,15 @@ class _SummaryPill extends StatelessWidget {
               Expanded(child: Text(l10n.historyCount(view.count), style: context.text.bodyMedium)),
               Text(l10n.historyTotal.toUpperCase(), style: context.text.labelMedium),
               const SizedBox(width: Space.sm),
-              Text(
-                context.money.format(view.net, display: MoneyDisplay.code, signed: true),
-                style: AppTypography.amount.copyWith(color: c.ink),
+              Flexible(
+                flex: 2,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    context.money.format(view.net, display: MoneyDisplay.code, signed: true),
+                    style: AppTypography.amount.copyWith(color: c.ink),
+                  ),
+                ),
               ),
             ],
           ),
