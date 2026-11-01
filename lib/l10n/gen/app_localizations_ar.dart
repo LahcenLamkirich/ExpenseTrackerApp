@@ -1060,4 +1060,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get gallerySegmentYear => 'سنة';
+
+  @override
+  String get splashTagline => 'تتبع المصاريف';
 }

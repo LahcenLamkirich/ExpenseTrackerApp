@@ -1049,4 +1049,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gallerySegmentYear => 'Year';
+
+  @override
+  String get splashTagline => 'Expense tracker';
 }

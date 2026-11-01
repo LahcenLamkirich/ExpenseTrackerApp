@@ -1053,4 +1053,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gallerySegmentYear => 'Année';
+
+  @override
+  String get splashTagline => 'Suivi des dépenses';
 }

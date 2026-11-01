@@ -359,5 +359,7 @@
   "gallerySampleSecondary": "Reset",
   "gallerySegmentWeek": "Week",
   "gallerySegmentMonth": "Month",
-  "gallerySegmentYear": "Year"
+  "gallerySegmentYear": "Year",
+
+  "splashTagline": "Expense tracker"
 }

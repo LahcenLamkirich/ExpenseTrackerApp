@@ -310,5 +310,7 @@
   "gallerySampleSecondary": "Réinitialiser",
   "gallerySegmentWeek": "Semaine",
   "gallerySegmentMonth": "Mois",
-  "gallerySegmentYear": "Année"
+  "gallerySegmentYear": "Année",
+
+  "splashTagline": "Suivi des dépenses"
 }

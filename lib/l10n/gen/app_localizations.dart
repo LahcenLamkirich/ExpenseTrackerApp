@@ -1869,6 +1869,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Year'**
   String get gallerySegmentYear;
+
+  /// No description provided for @splashTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense tracker'**
+  String get splashTagline;
 }
 
 class _AppLocalizationsDelegate
