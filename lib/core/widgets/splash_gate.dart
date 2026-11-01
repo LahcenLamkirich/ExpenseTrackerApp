@@ -8,9 +8,12 @@ import 'package:flutter/material.dart';
 /// Continues the native splash for two seconds: the same centred tile, with
 /// the tagline sliding up at the bottom, then fades away to reveal [child].
 class SplashGate extends StatefulWidget {
-  const SplashGate({required this.child, super.key});
+  const SplashGate({required this.child, super.key, @visibleForTesting this.firstFrame});
 
   final Widget child;
+
+  /// Replaces the wait for the first drawn frame, which tests never reach.
+  final Future<void>? firstFrame;
 
   @override
   State<SplashGate> createState() => _SplashGateState();
@@ -36,11 +39,21 @@ class _SplashGateState extends State<SplashGate> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    unawaited(
-      _controller.forward().whenComplete(() {
-        if (mounted) setState(() => _done = true);
-      }),
-    );
+    unawaited(_play());
+  }
+
+  // Waits for the first frame to reach the screen: on slow phones it can take
+  // seconds to draw, and the animation would otherwise play out unseen. The
+  // timeout keeps the splash from hiding the app if that signal never comes.
+  Future<void> _play() async {
+    await (widget.firstFrame ??
+        Future.any([
+          WidgetsBinding.instance.waitUntilFirstFrameRasterized,
+          Future<void>.delayed(const Duration(seconds: 5)),
+        ]));
+    if (!mounted) return;
+    await _controller.forward();
+    if (mounted) setState(() => _done = true);
   }
 
   @override

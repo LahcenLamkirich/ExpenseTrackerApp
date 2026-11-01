@@ -263,9 +263,9 @@ class _HeroCard extends ConsumerWidget {
               ],
             ),
           const SizedBox(height: Space.md),
-          Row(
-            children: [
-              if (change != null) ...[
+          if (change != null)
+            Row(
+              children: [
                 Icon(
                   change > 0 ? Icons.trending_up_rounded : Icons.trending_down_rounded,
                   size: 20,
@@ -278,20 +278,18 @@ class _HeroCard extends ConsumerWidget {
                     style: context.text.bodyMedium,
                   ),
                 ),
-              ] else
-                const Spacer(),
-              if (budget != null)
-                Flexible(
-                  child: TextButton.icon(
-                    onPressed: editBudget,
-                    iconAlignment: IconAlignment.end,
-                    icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-                    label: Text(l10n.dashBudgetDetails, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    style: TextButton.styleFrom(foregroundColor: c.accentStrong),
-                  ),
-                ),
-            ],
-          ),
+              ],
+            ),
+          if (budget != null)
+            Center(
+              child: TextButton.icon(
+                onPressed: editBudget,
+                iconAlignment: IconAlignment.end,
+                icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                label: Text(l10n.dashBudgetDetails, maxLines: 1, overflow: TextOverflow.ellipsis),
+                style: TextButton.styleFrom(foregroundColor: c.accentStrong),
+              ),
+            ),
         ],
       ),
     );

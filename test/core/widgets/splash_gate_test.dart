@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flossi/core/widgets/splash_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,7 +8,8 @@ import '../../helpers/pump_app.dart';
 
 void main() {
   testWidgets('shows the tagline, then reveals the app', (tester) async {
-    await tester.pumpApp(const SplashGate(child: Text('app')));
+    final firstFrame = Completer<void>();
+    await tester.pumpApp(SplashGate(firstFrame: firstFrame.future, child: const Text('app')));
     final tagline = find.text('Expense tracker');
     double opacity() => tester
         .widget<FadeTransition>(find.ancestor(of: tagline, matching: find.byType(FadeTransition)).first)
@@ -15,6 +18,13 @@ void main() {
 
     expect(tagline, findsOneWidget);
 
+    // The animation holds until the first frame has reached the screen.
+    await tester.pump(const Duration(seconds: 5));
+    expect(opacity(), 0);
+
+    firstFrame.complete();
+    await tester.pump();
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 1500));
     expect(opacity(), 1);
     expect(tester.getBottomLeft(tagline).dy, lessThan(tester.view.physicalSize.height / tester.view.devicePixelRatio));
