@@ -88,8 +88,6 @@ class _AmountSheetState extends State<_AmountSheet> {
                       onDecimal: () => setState(() => _input = _input.appendDecimalSeparator()),
                       onBackspace: () => setState(() => _input = _input.backspace()),
                       onClear: () => setState(() => _input = _input.clear()),
-                      onDone: () => setState(() => _keypadOpen = false),
-                      doneLabel: l10n.commonDone,
                     ),
                   )
                 : const SizedBox(width: double.infinity),
