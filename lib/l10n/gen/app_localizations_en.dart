@@ -225,6 +225,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetTapToEdit => 'Tap the amount to type it';
 
   @override
+  String get amountSheetHint => 'Type the amount, then tap Done';
+
+  @override
+  String get budgetSheetHintOnboarding =>
+      'Your spending limit for the month. We\'ll cheer you on as you stay under it.';
+
+  @override
+  String get budgetSheetHintEdit => 'Edit your monthly budget';
+
+  @override
   String get txAddExpense => 'Add expense';
 
   @override

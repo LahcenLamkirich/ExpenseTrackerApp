@@ -225,6 +225,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get budgetTapToEdit => 'Touchez le montant pour le saisir';
 
   @override
+  String get amountSheetHint => 'Saisissez le montant, puis touchez Terminé';
+
+  @override
+  String get budgetSheetHintOnboarding =>
+      'Votre limite de dépenses pour le mois. On vous encourage à rester en dessous.';
+
+  @override
+  String get budgetSheetHintEdit => 'Modifier votre budget mensuel';
+
+  @override
   String get txAddExpense => 'Nouvelle dépense';
 
   @override

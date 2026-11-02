@@ -19,6 +19,8 @@ class AmountKeypad extends StatelessWidget {
     required this.decimalLabel,
     super.key,
     this.onClear,
+    this.onDone,
+    this.doneLabel = '',
     this.allowDecimal = true,
     this.keyHeight = 52,
   });
@@ -27,6 +29,10 @@ class AmountKeypad extends StatelessWidget {
   final VoidCallback onDecimal;
   final VoidCallback onBackspace;
   final VoidCallback? onClear;
+
+  /// When set, a "Done" link is shown above the keys; it should close the keypad.
+  final VoidCallback? onDone;
+  final String doneLabel;
   final String decimalSeparator;
   final String backspaceLabel;
   final String decimalLabel;
@@ -78,6 +84,27 @@ class AmountKeypad extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (onDone != null)
+            // Toolbar like the system keypad: a "Done" link at the top right.
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.sm),
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton(
+                  onPressed: onDone,
+                  style: TextButton.styleFrom(
+                    // Same lime as the app's main buttons.
+                    backgroundColor: c.accent,
+                    foregroundColor: c.onAccent,
+                    shape: const StadiumBorder(),
+                    textStyle: context.text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                    minimumSize: const Size(64, 40),
+                    padding: const EdgeInsets.symmetric(horizontal: Space.md),
+                  ),
+                  child: Text(doneLabel),
+                ),
+              ),
+            ),
           for (final (i, row) in rows.indexed) ...[
             if (i > 0) const SizedBox(height: Space.smd),
             Row(

@@ -12,6 +12,7 @@ import 'package:flossi/core/widgets/app_card.dart';
 import 'package:flossi/core/widgets/buttons.dart';
 import 'package:flossi/core/widgets/common.dart';
 import 'package:flossi/core/widgets/currency_chip.dart';
+import 'package:flossi/core/widgets/editable_amount_box.dart';
 import 'package:flossi/features/onboarding/domain/budget_presets.dart';
 import 'package:flossi/features/onboarding/presentation/onboarding_controller.dart';
 import 'package:flossi/features/onboarding/presentation/onboarding_widgets.dart';
@@ -94,38 +95,33 @@ class _BudgetStepScreenState extends ConsumerState<BudgetStepScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SectionLabel(l10n.budgetMonthlyCap),
-                        Semantics(
-                          button: true,
-                          hint: l10n.budgetTapToEdit,
-                          child: InkWell(
-                            borderRadius: Radii.mdAll,
-                            onTap: () async {
-                              final picked = await showAmountSheet(
-                                context,
-                                initial: budget ?? Money.zero(state.currency),
-                                title: l10n.budgetEditTitle,
-                              );
-                              if (picked != null) controller.setBudget(picked.isZero ? null : picked);
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Flexible(
-                                  child: budget == null
-                                      ? Text(l10n.budgetNone, style: AppTypography.hero.copyWith(color: c.muted))
-                                      : HeroAmount(
-                                          budget,
-                                          currencyStyle: HeroCurrencyStyle.none,
-                                          style: AppTypography.heroXl,
-                                        ),
-                                ),
-                                const SizedBox(width: Space.sm),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: Space.smd),
-                                  child: CurrencyCodeBadge(currency: state.currency, showFlag: true),
-                                ),
-                              ],
-                            ),
+                        EditableAmountBox(
+                          hint: l10n.budgetSheetHintOnboarding,
+                          onTap: () async {
+                            final picked = await showAmountSheet(
+                              context,
+                              initial: budget ?? Money.zero(state.currency),
+                              title: l10n.budgetEditTitle,
+                              hint: l10n.budgetSheetHintOnboarding,
+                              // Tapping this box already means "type an amount".
+                              keypadOpen: true,
+                            );
+                            if (picked != null) controller.setBudget(picked.isZero ? null : picked);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              if (budget == null)
+                                Text(l10n.budgetNone, style: AppTypography.hero.copyWith(color: c.muted))
+                              else
+                                HeroAmount(budget, currencyStyle: HeroCurrencyStyle.none, style: AppTypography.heroXl),
+                              const SizedBox(width: Space.sm),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: Space.smd),
+                                child: CurrencyCodeBadge(currency: state.currency, showFlag: true),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: Space.md),

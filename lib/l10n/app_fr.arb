@@ -71,6 +71,9 @@
   "budgetAdjustLater": "Modifiable à tout moment dans les Réglages",
   "budgetEditTitle": "Budget mensuel",
   "budgetTapToEdit": "Touchez le montant pour le saisir",
+  "amountSheetHint": "Saisissez le montant, puis touchez Terminé",
+  "budgetSheetHintOnboarding": "Votre limite de dépenses pour le mois. On vous encourage à rester en dessous.",
+  "budgetSheetHintEdit": "Modifier votre budget mensuel",
 
   "txAddExpense": "Nouvelle dépense",
   "txAddIncome": "Nouveau revenu",

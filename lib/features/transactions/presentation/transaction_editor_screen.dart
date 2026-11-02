@@ -13,6 +13,7 @@ import 'package:flossi/core/widgets/buttons.dart';
 import 'package:flossi/core/widgets/category_icon.dart';
 import 'package:flossi/core/widgets/common.dart';
 import 'package:flossi/core/widgets/currency_chip.dart';
+import 'package:flossi/core/widgets/editable_amount_box.dart';
 import 'package:flossi/core/widgets/headers.dart';
 import 'package:flossi/core/widgets/segmented_pill.dart';
 import 'package:flossi/features/categories/data/category_repository.dart';
@@ -65,6 +66,28 @@ class _EditorBody extends ConsumerStatefulWidget {
 class _EditorBodyState extends ConsumerState<_EditorBody> {
   late final _title = TextEditingController(text: widget.state.title);
   late final _note = TextEditingController(text: widget.state.note);
+  final _titleFocus = FocusNode();
+  final _noteFocus = FocusNode();
+
+  /// The number keypad stays hidden until the amount box is tapped.
+  bool _keypadOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleFocus.addListener(_closeKeypadOnTextFocus);
+    _noteFocus.addListener(_closeKeypadOnTextFocus);
+  }
+
+  void _closeKeypadOnTextFocus() {
+    if ((_titleFocus.hasFocus || _noteFocus.hasFocus) && _keypadOpen) setState(() => _keypadOpen = false);
+  }
+
+  void _toggleKeypad() {
+    // Hide the system keyboard so the two never stack.
+    FocusScope.of(context).unfocus();
+    setState(() => _keypadOpen = !_keypadOpen);
+  }
 
   TransactionEditor get _controller => ref.read(transactionEditorProvider(widget.transactionId).notifier);
 
@@ -72,6 +95,8 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
   void dispose() {
     _title.dispose();
     _note.dispose();
+    _titleFocus.dispose();
+    _noteFocus.dispose();
     super.dispose();
   }
 
@@ -133,19 +158,30 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
       padding: const EdgeInsets.fromLTRB(Space.margin, 0, Space.margin, Space.sm),
       child: Column(
         children: [
-          AmountKeypad(
-            // Short screens keep room for the form above the keypad.
-            keyHeight: height < 760 ? 38 : 46,
-            decimalSeparator: context.money.decimalSeparator,
-            allowDecimal: s.currency.decimals > 0,
-            backspaceLabel: l10n.txKeypadBackspace,
-            decimalLabel: l10n.txKeypadDecimal,
-            onDigit: _controller.appendDigit,
-            onDecimal: _controller.appendDecimal,
-            onBackspace: _controller.backspace,
-            onClear: _controller.clearAmount,
+          AnimatedSize(
+            duration: Motion.medium,
+            curve: Motion.standard,
+            alignment: Alignment.bottomCenter,
+            child: _keypadOpen
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: Space.smd),
+                    child: AmountKeypad(
+                      // Short screens keep room for the form above the keypad.
+                      keyHeight: height < 760 ? 38 : 46,
+                      decimalSeparator: context.money.decimalSeparator,
+                      allowDecimal: s.currency.decimals > 0,
+                      backspaceLabel: l10n.txKeypadBackspace,
+                      decimalLabel: l10n.txKeypadDecimal,
+                      onDigit: _controller.appendDigit,
+                      onDecimal: _controller.appendDecimal,
+                      onBackspace: _controller.backspace,
+                      onClear: _controller.clearAmount,
+                      onDone: () => setState(() => _keypadOpen = false),
+                      doneLabel: l10n.commonDone,
+                    ),
+                  )
+                : const SizedBox(width: double.infinity),
           ),
-          const SizedBox(height: Space.smd),
           PrimaryButton(
             label: s.isEditing ? l10n.txSaveChanges : (isExpense ? l10n.txSaveExpense : l10n.txSaveIncome),
             loading: s.saving,
@@ -175,7 +211,13 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
               const SizedBox(height: Space.md),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Space.margin),
-                child: _AmountCard(state: s, onTypeChanged: _controller.setType, onEnterRate: () => _enterRate(s)),
+                child: _AmountCard(
+                  state: s,
+                  keypadOpen: _keypadOpen,
+                  onAmountTap: _toggleKeypad,
+                  onTypeChanged: _controller.setType,
+                  onEnterRate: () => _enterRate(s),
+                ),
               ),
               const SizedBox(height: Space.md),
               Padding(
@@ -208,6 +250,7 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
                   children: [
                     TextField(
                       controller: _title,
+                      focusNode: _titleFocus,
                       onChanged: _controller.setTitle,
                       textCapitalization: TextCapitalization.sentences,
                       textInputAction: TextInputAction.next,
@@ -219,6 +262,7 @@ class _EditorBodyState extends ConsumerState<_EditorBody> {
                     const SizedBox(height: Space.sm),
                     TextField(
                       controller: _note,
+                      focusNode: _noteFocus,
                       onChanged: _controller.setNote,
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
@@ -285,9 +329,17 @@ class _CurrencyStrip extends ConsumerWidget {
 }
 
 class _AmountCard extends StatelessWidget {
-  const _AmountCard({required this.state, required this.onTypeChanged, required this.onEnterRate});
+  const _AmountCard({
+    required this.state,
+    required this.keypadOpen,
+    required this.onAmountTap,
+    required this.onTypeChanged,
+    required this.onEnterRate,
+  });
 
   final TransactionEditorState state;
+  final bool keypadOpen;
+  final VoidCallback onAmountTap;
   final ValueChanged<TransactionType> onTypeChanged;
   final VoidCallback onEnterRate;
 
@@ -314,8 +366,11 @@ class _AmountCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: Space.md),
-          FittedBox(
-            fit: BoxFit.scaleDown,
+          EditableAmountBox(
+            active: keypadOpen,
+            alignment: Alignment.center,
+            hint: keypadOpen ? l10n.amountSheetHint : l10n.budgetTapToEdit,
+            onTap: onAmountTap,
             child: HeroAmount(
               s.amount,
               animate: false,

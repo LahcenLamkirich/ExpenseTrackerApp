@@ -496,6 +496,24 @@ abstract class AppLocalizations {
   /// **'Tap the amount to type it'**
   String get budgetTapToEdit;
 
+  /// No description provided for @amountSheetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the amount, then tap Done'**
+  String get amountSheetHint;
+
+  /// No description provided for @budgetSheetHintOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Your spending limit for the month. We\'ll cheer you on as you stay under it.'**
+  String get budgetSheetHintOnboarding;
+
+  /// No description provided for @budgetSheetHintEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit your monthly budget'**
+  String get budgetSheetHintEdit;
+
   /// No description provided for @txAddExpense.
   ///
   /// In en, this message translates to:

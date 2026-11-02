@@ -194,6 +194,7 @@ class _HeroCard extends ConsumerWidget {
         context,
         initial: budget ?? Money.zero(month.total.currency),
         title: l10n.budgetEditTitle,
+        hint: l10n.budgetSheetHintEdit,
       );
       if (picked != null) {
         await ref.read(settingsControllerProvider.notifier).setMonthlyBudget(picked.isZero ? null : picked.minor);
@@ -285,7 +286,7 @@ class _HeroCard extends ConsumerWidget {
               child: TextButton.icon(
                 onPressed: editBudget,
                 iconAlignment: IconAlignment.end,
-                icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                icon: const Icon(Icons.edit_rounded, size: 18),
                 label: Text(l10n.dashBudgetDetails, maxLines: 1, overflow: TextOverflow.ellipsis),
                 style: TextButton.styleFrom(foregroundColor: c.accentStrong),
               ),

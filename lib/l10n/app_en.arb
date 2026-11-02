@@ -80,6 +80,9 @@
   "budgetAdjustLater": "You can adjust this anytime in Settings",
   "budgetEditTitle": "Monthly budget",
   "budgetTapToEdit": "Tap the amount to type it",
+  "amountSheetHint": "Type the amount, then tap Done",
+  "budgetSheetHintOnboarding": "Your spending limit for the month. We'll cheer you on as you stay under it.",
+  "budgetSheetHintEdit": "Edit your monthly budget",
 
   "txAddExpense": "Add expense",
   "txAddIncome": "Add income",

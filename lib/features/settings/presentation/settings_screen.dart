@@ -107,6 +107,7 @@ class SettingsScreen extends ConsumerWidget {
                       context,
                       initial: budget ?? Money.zero(home),
                       title: l10n.budgetEditTitle,
+                      hint: l10n.budgetSheetHintEdit,
                     );
                     if (picked != null) await controller.setMonthlyBudget(picked.isZero ? null : picked.minor);
                   },

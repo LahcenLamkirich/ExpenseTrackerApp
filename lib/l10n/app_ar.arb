@@ -71,6 +71,9 @@
   "budgetAdjustLater": "يمكنك تعديل ذلك في أي وقت من الإعدادات",
   "budgetEditTitle": "الميزانية الشهرية",
   "budgetTapToEdit": "اضغط على المبلغ لكتابته",
+  "amountSheetHint": "اكتب المبلغ ثم اضغط على تم",
+  "budgetSheetHintOnboarding": "هذا هو المبلغ الذي تخطط لإنفاقه هذا الشهر. سنساعدك على البقاء ضمنه.",
+  "budgetSheetHintEdit": "عدّل ميزانيتك الشهرية",
 
   "txAddExpense": "إضافة مصروف",
   "txAddIncome": "إضافة دخل",

@@ -224,6 +224,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get budgetTapToEdit => 'اضغط على المبلغ لكتابته';
 
   @override
+  String get amountSheetHint => 'اكتب المبلغ ثم اضغط على تم';
+
+  @override
+  String get budgetSheetHintOnboarding =>
+      'هذا هو المبلغ الذي تخطط لإنفاقه هذا الشهر. سنساعدك على البقاء ضمنه.';
+
+  @override
+  String get budgetSheetHintEdit => 'عدّل ميزانيتك الشهرية';
+
+  @override
   String get txAddExpense => 'إضافة مصروف';
 
   @override
